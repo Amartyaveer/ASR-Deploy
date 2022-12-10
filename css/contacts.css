@@ -85,9 +85,15 @@ body {
 #contents {
 	padding-left: 30px;
 	padding-right: 30px;
+	margin-top: 200px;
+	margin-bottom: 200px;
 	text-align: justify;
 	position: relative;
 	font-size: 20px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
 }
 
 #contents h3 {
