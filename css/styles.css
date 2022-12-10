@@ -1,0 +1,178 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:700,400);
+
+body {
+	color: #FFF;
+	font-family: 'Open Sans', sans-serif;
+	min-width: 1024;
+	top: 0;
+	left: 0;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	color: #000;
+	background-size: cover;
+	background: url('../images/swirl_pattern.png') top left repeat;
+}
+
+.logo h1 {
+	font-size: 50px;
+	letter-spacing: -2px;
+	line-height: 40px;
+	text-align: center;
+}
+
+#Header {
+	position: relative;
+	width: 100%;
+	z-index: 1;
+	padding-top: 50px
+}
+
+.logo {
+	width: auto;
+	margin: 0 auto;
+	padding: 16px;
+	border-radius: 180px;
+	padding-bottom: 50px;
+}
+
+.logo h1 {
+	color: #0f66b1;
+	font-weight: 600;
+}
+
+.Border {
+	text-align: left;
+	margin-top: 30px;
+
+	margin-bottom: 30px;
+	overflow: hidden;
+	background-color: #333;
+}
+
+.Border a {
+	float: left;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+
+.Border a.active {
+	background-color: #5381E4;
+	color: white;
+}
+
+#WindowSlide {
+	margin: 0 auto;
+	position: relative;
+	width: 634px;
+	height: 170px;
+	display: block;
+	overflow: hidden;
+}
+
+#content h3 {
+	text-align: center;
+	font-size: 24px;
+	font-weight: normal;
+	display: block;
+	clear: both;
+}
+
+#content p {
+	text-align: justify;
+}
+
+#content div h3 {
+	color: #000;
+}
+
+#col-1 {
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
+	position: relative;
+	width: 65%;
+	height: fit-content;
+	color: #676767;
+	font-size: 20px;
+	float: left;
+	font-weight: normal;
+	word-wrap: break-word;
+	border-right: 2px solid #ccc;
+}
+
+#col-2 {
+	padding-left: 20px;
+	padding-right: 20px;
+	position: relative;
+	width: 35%;
+	float: right;
+	height: fit-content;
+	color: #676767;
+	font-size: 20px;
+	font-weight: normal;
+	word-wrap: break-word;
+}
+
+.features {
+	background: rgba(55, 55, 55, 0.15);
+	position: relative;
+	margin-top: 20px;
+	text-align: center;
+}
+
+.features div h2{
+	font-size: 24px;
+}
+
+.col-6 {
+	padding-bottom: 20px;
+	font-size: 20px;
+	font-weight: normal;
+}
+
+.col-6 button {
+	border: none;
+	border-radius: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 13px;
+	padding-right: 13px;
+	margin-bottom: 10px;
+}
+
+.footer {
+	display: block;
+	text-align: center;
+	padding-bottom: 110px;
+	background: #fff;
+	padding-left: 20px;
+}
+
+.footer img {
+	height: 5em;
+	width: 6em;
+	margin: 1em 1em 1em 0em;
+	float: left;
+}
+
+#iisc{
+	border-right: 1px solid #ccc;
+	padding-right: 1em;
+	margin-left: 20px;
+}
+
+#iitb{
+	border-right: 1px solid #ccc;
+	padding-right: 1em;
+}
+
+#spire{
+	height: 5em;
+	width: 4em;
+}
+
