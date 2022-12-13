@@ -33,7 +33,6 @@ body {
 	font-weight: 600;
 	letter-spacing: -2px;
 	text-align: center;
-	line-height: 10px;
 }
 
 .logo h2{
@@ -87,72 +86,12 @@ body {
 	padding-right: 30px;
 	margin-top: 200px;
 	margin-bottom: 200px;
-	text-align: justify;
 	position: relative;
 	font-size: 20px;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
 	text-align: center;
 }
 
-#contents h3 {
-	text-decoration: underline;
-	text-align: left;
-	font-size: 24px;
 
-}
-#contents h4{
-	text-decoration: underline;
-	text-align: left;
-	font-size: 20px;
-	text-indent: +1.3em;
-	color: rgb(65, 64, 64);
-
-
-}
-
-#contents p {
-	text-align: justify;
-	color: rgb(100, 100, 100);
-}
-
-#contents li{
-	margin-left: 30px;
-	color: rgb(100, 100, 100);
-}
-
-
-
-#contents div h3 {
-	color: #000;
-}
-
-.features {
-	background: rgba(55, 55, 55, 0.15);
-	position: relative;
-	margin-top: 20px;
-	text-align: center;
-}
-
-.features div h2{
-	font-size: 24px;
-}
-
-.col-6 {
-	padding-bottom: 20px;
-	font-size: 20px;
-}
-
-.col-6 button {
-	border: none;
-	border-radius: 10px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-left: 13px;
-	padding-right: 13px;
-	margin-bottom: 10px;
-}
 
 .footer {
 	display: block;

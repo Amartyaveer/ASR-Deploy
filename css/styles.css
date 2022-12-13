@@ -33,7 +33,6 @@ body {
 	font-weight: 600;
 	letter-spacing: -2px;
 	text-align: center;
-	line-height: 10px;
 }
 
 .logo h2{
@@ -85,26 +84,14 @@ body {
 #contents {
 	padding-left: 30px;
 	padding-right: 30px;
+	margin-top: 200px;
+	margin-bottom: 200px;
 	text-align: justify;
 	position: relative;
 	font-size: 20px;
+	text-align: center;
 }
 
-#contents h3 {
-	text-decoration: underline;
-	text-align: left;
-	font-size: 24px;
-
-}
-#contents h4{
-	text-decoration: underline;
-	text-align: left;
-	font-size: 20px;
-	text-indent: +1.3em;
-	color: rgb(65, 64, 64);
-
-
-}
 
 #contents p {
 	text-align: justify;
