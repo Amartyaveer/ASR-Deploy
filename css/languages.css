@@ -84,13 +84,18 @@ body {
 #contents {
 	padding-left: 30px;
 	padding-right: 30px;
-	margin-top: 200px;
-	margin-bottom: 200px;
+	margin-bottom: 60px;
 	position: relative;
 	font-size: 20px;
+	color: rgb(100, 100, 100);
 	text-align: center;
 }
 
+.row{
+	outline: rgb(201, 200, 200);
+	outline-style: dashed;
+	padding-top: 30px;
+}
 
 
 .footer {
@@ -99,6 +104,7 @@ body {
 	padding-bottom: 110px;
 	background: #fff;
 	padding-left: 20px;
+	margin:0px 10px 0px 10px
 }
 
 .footer img {

@@ -93,6 +93,7 @@ body {
 }
 
 
+
 #contents p {
 	text-align: justify;
 	color: rgb(100, 100, 100);
@@ -114,6 +115,7 @@ body {
 	position: relative;
 	margin-top: 20px;
 	text-align: center;
+	margin:0px 10px 0px 10px
 }
 
 .features div h2{
@@ -141,6 +143,7 @@ body {
 	padding-bottom: 110px;
 	background: #fff;
 	padding-left: 20px;
+	margin:0px 10px 0px 10px
 }
 
 .footer img {
