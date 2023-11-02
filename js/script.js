@@ -1,5 +1,5 @@
 function ln () {
-    window.alert("Link not availabel");
+    window.alert("Link not available");
     
 };
 
