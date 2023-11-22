@@ -77,8 +77,8 @@
                   // Send the base64 string to your Flask API
                   $.ajax({
                       type: "POST",
-                      url: "http://127.0.0.1:5000/api/some_endpoint/",
-                      // url: "https://2jbhk4h8ok.execute-api.ap-south-1.amazonaws.com/test/",
+                      // url: "http://127.0.0.1:5000/api/some_endpoint/",
+                      url: "https://2jbhk4h8ok.execute-api.ap-south-1.amazonaws.com/test/",
                       contentType: "base64/string", // Set the content type appropriately
                       data: JSON.stringify({'model': model, 'data': base64String}),
                 
