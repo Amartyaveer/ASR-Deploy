@@ -13,6 +13,10 @@
 
 <body>
   <style>
+    #speechContainer {
+      display: none;
+    }
+
     #submit {
       margin-top: 2em;
       margin-bottom: .2em;
@@ -28,7 +32,8 @@
       font-weight: bolder;
       text-align: center;
     }
-    #ft1{
+
+    #ft1 {
       padding: 10px 10px;
       margin-top: 5em;
       margin-bottom: 1em;
@@ -36,77 +41,258 @@
     }
 
     div.scroll {
-                overflow-x: hidden;
-                overflow-y: auto;
-                text-align:justify;
-            }
+      overflow-x: hidden;
+      overflow-y: auto;
+      text-align: justify;
+    }
+
+    #record {
+      margin-top: 1em;
+      margin-bottom: 1em;
+      display: flex;
+      height: fit-content;
+    }
+
+    #timer {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-left: 1em;
+      align-items: center;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #loading-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      flex-direction: column;
+    }
+
+    #loading-spinner {
+      border: 8px solid #3498db;
+      border-top: 8px solid #ffffff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+    }
+
+    #ld_text {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-top: 1em;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+
+    }
   </style>
 
+  <div id="loading-container">
+    <div id="loading-spinner"></div>
+    <h2 id="ld_text" style="margin-left: 1em;"> Loading model...</h2>
+  </div>
 
-
-  <div id="speechContainer" class="container" style="border-style: ridge;  border-width: 5px; margin-bottom: 0.5em; margin-top: 0.5em;">
+  <div id="speechContainer" class="container"
+    style="border-style: ridge;  border-width: 5px; margin-bottom: 0.5em; margin-top: 0.5em;">
     <!-- Header -->
     <header id="hd1" class="w3-container">
       <h1 class="w3-margin w3-jumbo">Automatic Speech Recognition Demo</h1>
 
     </header>
-    <p style="margin-top: 2em; font-weight: bold; text-align: center; font-size: medium;">Enter your audio below and click submit...</p>
+    <p style="margin-top: 2em; font-weight: bold; text-align: center; font-size: medium;">Enter/Record your audio below
+      and
+      click submit...</p>
 
     <div>
-      <input id="fileInput" class='form-control' name="file" type="file" style="margin-top: 2em; height: auto;" accept=".wav" />
+      <input id="fileInput" class='form-control' name="file" type="file" style="margin-top: 2em; height: auto;"
+        accept=".mp3,.wav,.flac" />
 
+      <div id="record" , class="form-control">
+        <button id="recordButton">Record</button>
+        <span id="timer">00:00</span>
+      </div>
+      <audio controls id="audioPlayer" class='form-control'></audio>
+      <button id="submit" type="button" class="btn btn-primary">Submit</button>
       <h1 class="bg-success" id="speechText"></h1>
 
-      <button id="submit" type="submit" class="btn btn-default">Submit</button>
+    </div>
 
-    </div> 
-      
-<script>
-  var urlParams = new URLSearchParams(window.location.search);
-  var model = urlParams.get('model');
-  $(document).ready(function () {
-      $("#submit").click(function () {
-          var fileInput = document.getElementById('fileInput');
+    <script>
+      var urlParams = new URLSearchParams(window.location.search);
+      var model = urlParams.get('model');
+      var base64String = "";
+      const audioPlayer = document.getElementById('audioPlayer');
+
+
+      $(document).ready(function () {
+        var fileInput = document.getElementById('fileInput');
+        var reader = new FileReader();
+
+        fileInput.addEventListener('change', function () {
           var file = fileInput.files[0];
 
           if (file) {
-              var reader = new FileReader();
-              reader.onload = function (e) {
-                  var base64String = e.target.result.split(',')[1]; // Extract the base64 string
+            reader.onload = function (e) {
+              base64String = e.target.result.split(',')[1]; // Extract the base64 string
+              // Set audio player source
+              audioPlayer.src = 'data:audio/wav;base64,' + base64String;
+            };
+            // Read the file as a data URL
+            reader.readAsDataURL(file);
+          }
+        });
+      });
 
-                  // Send the base64 string to your Flask API
-                  $.ajax({
-                      type: "POST",
-                      // url: "http://127.0.0.1:5000/api/some_endpoint/",
-                      url: "https://2jbhk4h8ok.execute-api.ap-south-1.amazonaws.com/test/",
-                      contentType: "base64/string", // Set the content type appropriately
-                      data: JSON.stringify({'model': model, 'data': base64String}),
-                
-                      success: function (response) {
-                          console.log(response);
-                          $("#speechText").html(response);
-                      },
-                      error: function (error) {
-                          console.error(error);
-                      }
-                  });
+      document.addEventListener('DOMContentLoaded', function () {
+        const recordButton = document.getElementById('recordButton');
+        const timerElement = document.getElementById('timer');
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let startTime;
+
+        function startRecording() {
+          document.getElementById('fileInput').value = '';
+          const stream = navigator.mediaDevices.getUserMedia({ audio: true });
+
+          stream.then((stream) => {
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = function (e) {
+              if (e.data.size > 0) {
+                audioChunks.push(e.data);
+              }
+            };
+
+            mediaRecorder.onstop = function () {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+              const reader = new FileReader();
+              reader.onload = function () {
+                base64String = reader.result.split(',')[1]; // Extract base64 data
+
+
+                // Set audio player source
+                audioPlayer.src = 'data:audio/wav;base64,' + base64String;
+
               };
 
-              // Read the file as a data URL
-              reader.readAsDataURL(file);
-          } else {
-              alert("Please select a file.");
-          }
+              reader.readAsDataURL(audioBlob);
+
+              // Reset for the next recording
+              audioChunks = [];
+
+              // Stop the stream
+              stream.getTracks()[0].stop();
+
+              // Stop the timer
+              clearInterval(timerInterval);
+              timerElement.textContent = '00:00';
+            };
+
+            // Start the timer
+            startTime = new Date().getTime();
+            const timerInterval = setInterval(updateTimer, 1000);
+
+            function updateTimer() {
+              const currentTime = new Date().getTime();
+              const elapsedTime = new Date(currentTime - startTime);
+              const minutes = elapsedTime.getUTCMinutes().toString().padStart(2, '0');
+              const seconds = elapsedTime.getUTCSeconds().toString().padStart(2, '0');
+              timerElement.textContent = `${minutes}:${seconds}`;
+            }
+
+            mediaRecorder.start();
+            recordButton.textContent = 'Stop Recording';
+            recordButton.onclick = stopRecording;
+          });
+        }
+
+        function stopRecording() {
+          mediaRecorder.stop();
+          recordButton.textContent = 'Record';
+          recordButton.onclick = startRecording;
+        }
+
+        recordButton.onclick = startRecording;
       });
-  });
-</script>
 
-  <footer id="ft1" class="w3-container">
-    <img style="height: 5em; width:5.6em; margin-right: 1em;" src="https://respin.iisc.ac.in/static/media/IISC.828edf6d.png">
-    <img style="height: 5em; width:5.6em;  margin-right: 1em; padding-left: 1em; border-left: 1px solid #ccc;" src="data:image/png;base64,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">
+      $("#submit").click(function () {
 
-    <img style="height: 5em; width:6em; padding-left: 1em; border-left: 1px solid #ccc;" src="https://www.iitb.ac.in/sites/www.iitb.ac.in/themes/touchm/logo.png">
-</div>
+        // Send the base64 string to your Flask API
+
+        if (base64String == "") {
+          alert("Please record or upload an audio file!");
+          return;
+        }
+
+        $.ajax({
+          type: "POST",
+          url: "https://2jbhk4h8ok.execute-api.ap-south-1.amazonaws.com/test",
+          contentType: "application/json", // Set the content type appropriately
+          data: JSON.stringify({ 'model': model, 'data': base64String }),
+
+          success: function (response) {
+            console.log(response);
+            $("#speechText").html(response);
+            base64String = "";
+          },
+          error: function (error) {
+            console.error(error);
+          }
+        });
+      });
+
+      async function fetchData() {
+        let data;
+
+        // Keep fetching data until the status_code is 200
+        do {
+          // console.log("Fetching data...");
+          const response = await fetch('https://2jbhk4h8ok.execute-api.ap-south-1.amazonaws.com/test?mdl='+model);
+          const responseData = await response.json();
+          if (responseData['body'] != null) {
+            data = JSON.parse(responseData['body'])['status_code'];
+            // console.log(data);
+          }
+          else{
+            // Add a delay before the next fetch (adjust the delay as needed)
+            await new Promise(resolve => setTimeout(resolve, 20000));
+          }
+        }while (data !== 200)
+
+        // Once status_code is 200, hide loadingContainer and show speechContainer
+        document.getElementById('loading-container').style.display = 'none';
+        document.getElementById('speechContainer').style.display = 'block';
+      }
+
+      // Call the fetchData function
+      fetchData();
+
+    </script>
+
+    <footer id="ft1" class="w3-container">
+      <img style="height: 5em; width:5.6em; margin-right: 1em;"
+        src="https://github.com/Amartyaveer/ASR-Deploy/blob/main/images/IISC.png?raw=true">
+      <img style="height: 5em; width:5.6em;  margin-right: 1em; padding-left: 1em; border-left: 1px solid #ccc;"
+        src="https://github.com/Amartyaveer/ASR-Deploy/blob/main/images/SPIRE.png?raw=true">
+      <img style="height: 5em; width:6em; padding-left: 1em; border-left: 1px solid #ccc;"
+        src="https://github.com/Amartyaveer/ASR-Deploy/blob/main/images/IITB.png?raw=true">
+  </div>
 </body>
 
 </html>
