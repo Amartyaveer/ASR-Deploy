@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="js/WebAudioRecorder.min.js"></script>
 
 
 <body>
@@ -161,48 +162,50 @@
         const recordButton = document.getElementById('recordButton');
         const timerElement = document.getElementById('timer');
 
-        let mediaRecorder;
-        let audioChunks = [];
+        var recorder;
         let startTime;
+        var timerInterval;
+        const encodingType = 'mp3'; // 'wav', 'ogg', or 'mp3'
 
         function startRecording() {
           document.getElementById('fileInput').value = '';
           const stream = navigator.mediaDevices.getUserMedia({ audio: true });
 
           stream.then((stream) => {
-            mediaRecorder = new MediaRecorder(stream);
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var input = audioContext.createMediaStreamSource(stream);
 
-            mediaRecorder.ondataavailable = function (e) {
-              if (e.data.size > 0) {
-                audioChunks.push(e.data);
+            recorder = new WebAudioRecorder(input, {
+              workerDir: "js/", // must end with slash
+              encoding: encodingType,
+              sampleRate: 16000, // the sample rate of the PCM audio
+              numChannels: 2, //2 is the default, mp3 encoding supports only 2
+              onEncoderLoading: function (recorder, encoding) {
+                // show "loading encoder..." display
+                console.log("Loading " + encoding + " encoder...");
+              },
+              onEncoderLoaded: function (recorder, encoding) {
+                // hide "loading encoder..." display
+                console.log(encoding + " encoder loaded");
               }
-            };
+            });
 
-            mediaRecorder.onstop = function () {
-              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-
-              const reader = new FileReader();
-              reader.onload = function () {
-                base64String = reader.result.split(',')[1]; // Extract base64 data
-
-
-                // Set audio player source
-                audioPlayer.src = 'data:audio/wav;base64,' + base64String;
-
-              };
-
-              reader.readAsDataURL(audioBlob);
-
-              // Reset for the next recording
-              audioChunks = [];
-
+            recorder.onComplete = function (recorder, blob) {
+              console.log("Encoding complete");
               // Stop the stream
               stream.getTracks()[0].stop();
-
               // Stop the timer
               clearInterval(timerInterval);
               timerElement.textContent = '00:00';
+              create_b64(blob, encodingType);
+
             };
+            recorder.setOptions({
+              timeLimit: 120,
+              encodeAfterRecord: true,
+              ogg: { quality: 0.5 },
+              mp3: { bitRate: 160 }
+            });
 
             // Start the timer
             startTime = new Date().getTime();
@@ -216,20 +219,31 @@
               timerElement.textContent = `${minutes}:${seconds}`;
             }
 
-            mediaRecorder.start();
+            recorder.startRecording();
             recordButton.textContent = 'Stop Recording';
             recordButton.onclick = stopRecording;
           });
         }
 
         function stopRecording() {
-          mediaRecorder.stop();
+          recorder.finishRecording();
           recordButton.textContent = 'Record';
           recordButton.onclick = startRecording;
         }
 
         recordButton.onclick = startRecording;
       });
+
+      function create_b64(blob, encodingType) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          base64String = reader.result.split(',')[1]; // Extract base64 data
+          // Set audio player source
+          audioPlayer.src = 'data:audio/wav;base64,' + base64String;
+        };
+
+        reader.readAsDataURL(blob);
+      };
 
       $("#submit").click(function () {
 
@@ -263,17 +277,17 @@
         // Keep fetching data until the status_code is 200
         do {
           // console.log("Fetching data...");
-          const response = await fetch('https://2jbhk4h8ok.execute-api.ap-south-1.amazonaws.com/test?mdl='+model);
+          const response = await fetch('https://2jbhk4h8ok.execute-api.ap-south-1.amazonaws.com/test?mdl=' + model);
           const responseData = await response.json();
           if (responseData['body'] != null) {
             data = JSON.parse(responseData['body'])['status_code'];
             // console.log(data);
           }
-          else{
+          else {
             // Add a delay before the next fetch (adjust the delay as needed)
             await new Promise(resolve => setTimeout(resolve, 20000));
           }
-        }while (data !== 200)
+        } while (data !== 200)
 
         // Once status_code is 200, hide loadingContainer and show speechContainer
         document.getElementById('loading-container').style.display = 'none';
@@ -286,12 +300,10 @@
     </script>
 
     <footer id="ft1" class="w3-container">
-      <img style="height: 5em; width:5.6em; margin-right: 1em;"
-        src="images/IISC.png">
+      <img style="height: 5em; width:5.6em; margin-right: 1em;" src="images/IISC.png">
       <img style="height: 5em; width:5.6em;  margin-right: 1em; padding-left: 1em; border-left: 1px solid #ccc;"
         src="images/SPIRE.png">
-      <img style="height: 5em; width:6em; padding-left: 1em; border-left: 1px solid #ccc;"
-        src="images/IITB.png">
+      <img style="height: 5em; width:6em; padding-left: 1em; border-left: 1px solid #ccc;" src="images/IITB.png">
   </div>
 </body>
 
